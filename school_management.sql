@@ -30,15 +30,48 @@ CREATE TABLE `floors` (
   FOREIGN KEY (`color_id`) REFERENCES `colors`(`color_id`) ON DELETE SET NULL
 );
 
+-- Table for Room Types
+CREATE TABLE `room_types` (
+  `type_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `type_name` VARCHAR(50) NOT NULL UNIQUE
+);
+
+-- Table for Statuses
+CREATE TABLE `statuses` (
+  `status_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `status_name` VARCHAR(50) NOT NULL UNIQUE
+);
+
+-- Insert Room Types
+INSERT INTO `room_types` (`type_name`) VALUES
+('classroom'),
+('laboratory'),
+('office'),
+('auditorium'),
+('other');
+
+-- Insert Statuses
+INSERT INTO `statuses` (`status_name`) VALUES
+('available'),
+('reserved'),
+('unavailable'),
+('active'),
+('inactive'),
+('unread'),
+('read'),
+('canceled'),
+('completed');
+
 -- Table for Rooms
 CREATE TABLE `rooms` (
   `room_id` INT PRIMARY KEY AUTO_INCREMENT,
   `floor_id` INT NOT NULL,
   `name` VARCHAR(255) NOT NULL,
   `capacity` INT DEFAULT 1,
-  `room_type` ENUM('classroom', 'laboratory', 'office', 'auditorium', 'other') DEFAULT 'other',
+  `room_type_id` INT,
   `color_id` INT,
   FOREIGN KEY (`floor_id`) REFERENCES `floors`(`floor_id`) ON DELETE CASCADE,
+  FOREIGN KEY (`room_type_id`) REFERENCES `room_types`(`type_id`) ON DELETE SET NULL,
   FOREIGN KEY (`color_id`) REFERENCES `colors`(`color_id`) ON DELETE SET NULL
 );
 
@@ -65,8 +98,9 @@ CREATE TABLE `classes` (
   `name` VARCHAR(255) NOT NULL,
   `teacher_id` INT NOT NULL,
   `schedule` VARCHAR(255) NOT NULL,
-  `status` ENUM('active', 'inactive') DEFAULT 'active',
-  FOREIGN KEY (`teacher_id`) REFERENCES `users`(`user_id`) ON DELETE SET NULL
+  `status_id` INT,
+  FOREIGN KEY (`teacher_id`) REFERENCES `users`(`user_id`) ON DELETE SET NULL,
+  FOREIGN KEY (`status_id`) REFERENCES `statuses`(`status_id`) ON DELETE SET NULL
 );
 
 -- Table for Room Reservations
@@ -93,13 +127,43 @@ CREATE TABLE `resource_reservations` (
   FOREIGN KEY (`resource_id`) REFERENCES `resources`(`resource_id`) ON DELETE CASCADE
 );
 
--- Table for Access Logs
 CREATE TABLE `access_logs` (
   `log_id` INT PRIMARY KEY AUTO_INCREMENT,
   `user_id` INT NOT NULL,
   `action` VARCHAR(255) NOT NULL,
+  `ip_address` VARCHAR(45) NOT NULL,
+  `device_info` VARCHAR(255) NOT NULL, 
   `timestamp` DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE
+)
+PARTITION BY RANGE (TO_DAYS(`timestamp`)) (
+  -- Partitions for 2025
+  PARTITION p2025_01 VALUES LESS THAN (TO_DAYS('2025-02-01')),
+  PARTITION p2025_02 VALUES LESS THAN (TO_DAYS('2025-03-01')),
+  PARTITION p2025_03 VALUES LESS THAN (TO_DAYS('2025-04-01')),
+  PARTITION p2025_04 VALUES LESS THAN (TO_DAYS('2025-05-01')),
+  PARTITION p2025_05 VALUES LESS THAN (TO_DAYS('2025-06-01')),
+  PARTITION p2025_06 VALUES LESS THAN (TO_DAYS('2025-07-01')),
+  PARTITION p2025_07 VALUES LESS THAN (TO_DAYS('2025-08-01')),
+  PARTITION p2025_08 VALUES LESS THAN (TO_DAYS('2025-09-01')),
+  PARTITION p2025_09 VALUES LESS THAN (TO_DAYS('2025-10-01')),
+  PARTITION p2025_10 VALUES LESS THAN (TO_DAYS('2025-11-01')),
+  PARTITION p2025_11 VALUES LESS THAN (TO_DAYS('2025-12-01')),
+  PARTITION p2025_12 VALUES LESS THAN (TO_DAYS('2026-01-01')),
+
+  -- Partitions for 2026
+  PARTITION p2026_01 VALUES LESS THAN (TO_DAYS('2026-02-01')),
+  PARTITION p2026_02 VALUES LESS THAN (TO_DAYS('2026-03-01')),
+  PARTITION p2026_03 VALUES LESS THAN (TO_DAYS('2026-04-01')),
+  PARTITION p2026_04 VALUES LESS THAN (TO_DAYS('2026-05-01')),
+  PARTITION p2026_05 VALUES LESS THAN (TO_DAYS('2026-06-01')),
+  PARTITION p2026_06 VALUES LESS THAN (TO_DAYS('2026-07-01')),
+  PARTITION p2026_07 VALUES LESS THAN (TO_DAYS('2026-08-01')),
+  PARTITION p2026_08 VALUES LESS THAN (TO_DAYS('2026-09-01')),
+  PARTITION p2026_09 VALUES LESS THAN (TO_DAYS('2026-10-01')),
+  PARTITION p2026_10 VALUES LESS THAN (TO_DAYS('2026-11-01')),
+  PARTITION p2026_11 VALUES LESS THAN (TO_DAYS('2026-12-01')),
+  PARTITION p2026_12 VALUES LESS THAN (TO_DAYS('2027-01-01'))
 );
 
 -- Table for Notifications
@@ -111,3 +175,73 @@ CREATE TABLE `notifications` (
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE
 );
+
+DELIMITER $$
+
+-- Trigger to check if the resource quantity is not negative (before insert)
+CREATE TRIGGER check_negative_quantity_before_insert
+BEFORE INSERT ON `resources`
+FOR EACH ROW
+BEGIN
+  -- If the quantity is less than 0, signal an error
+  IF NEW.quantity < 0 THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Resource quantity cannot be negative';
+  END IF;
+END $$
+
+-- Trigger to check if the resource quantity is not negative (before update)
+CREATE TRIGGER check_negative_quantity_before_update
+BEFORE UPDATE ON `resources`
+FOR EACH ROW
+BEGIN
+  -- If the quantity is less than 0, signal an error
+  IF NEW.quantity < 0 THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Resource quantity cannot be negative';
+  END IF;
+END $$
+
+-- Trigger to ensure `start_time` is less than `end_time` for reservations (before insert)
+CREATE TRIGGER check_start_time_before_insert
+BEFORE INSERT ON `room_reservations`
+FOR EACH ROW
+BEGIN
+  -- If the start time is greater than or equal to end time, signal an error
+  IF NEW.start_time >= NEW.end_time THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Start time must be earlier than end time';
+  END IF;
+END $$
+
+-- Trigger to ensure `start_time` is less than `end_time` for reservations (before update)
+CREATE TRIGGER check_start_time_before_update
+BEFORE UPDATE ON `room_reservations`
+FOR EACH ROW
+BEGIN
+  -- If the start time is greater than or equal to end time, signal an error
+  IF NEW.start_time >= NEW.end_time THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Start time must be earlier than end time';
+  END IF;
+END $$
+
+-- Trigger to ensure `start_time` is less than `end_time` for resource reservations (before insert)
+CREATE TRIGGER check_start_time_before_insert_resource
+BEFORE INSERT ON `resource_reservations`
+FOR EACH ROW
+BEGIN
+  -- If the start time is greater than or equal to end time, signal an error
+  IF NEW.start_time >= NEW.end_time THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Start time must be earlier than end time';
+  END IF;
+END $$
+
+-- Trigger to ensure `start_time` is less than `end_time` for resource reservations (before update)
+CREATE TRIGGER check_start_time_before_update_resource
+BEFORE UPDATE ON `resource_reservations`
+FOR EACH ROW
+BEGIN
+  -- If the start time is greater than or equal to end time, signal an error
+  IF NEW.start_time >= NEW.end_time THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Start time must be earlier than end time';
+  END IF;
+END $$
+
+DELIMITER ;
