@@ -9,6 +9,47 @@ CREATE TABLE `colors` (
   `hex_code` CHAR(7) NOT NULL
 );
 
+-- Table for Room Types
+CREATE TABLE `room_types` (
+  `type_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `type_name` VARCHAR(50) NOT NULL UNIQUE
+);
+
+-- Insert Room Types
+INSERT INTO `room_types` (`type_name`) VALUES
+('classroom'),
+('laboratory'),
+('office'),
+('auditorium'),
+('other');
+
+-- Table for Statuses
+CREATE TABLE `statuses` (
+  `status_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `status_name` VARCHAR(50) NOT NULL UNIQUE
+);
+
+-- Insert Statuses
+INSERT INTO `statuses` (`status_name`) VALUES
+('available'),
+('reserved'),
+('unavailable'),
+('active'),
+('inactive'),
+('unread'),
+('read'),
+('canceled'),
+('completed');
+
+-- Table for Users
+CREATE TABLE `users` (
+  `user_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(255) UNIQUE NOT NULL,
+  `role` ENUM('teacher', 'admin', 'staff') DEFAULT 'staff',
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Table for Buildings
 CREATE TABLE `buildings` (
   `building_id` INT PRIMARY KEY AUTO_INCREMENT,
@@ -30,77 +71,39 @@ CREATE TABLE `floors` (
   FOREIGN KEY (`color_id`) REFERENCES `colors`(`color_id`) ON DELETE SET NULL
 );
 
--- Table for Room Types
-CREATE TABLE `room_types` (
-  `type_id` INT PRIMARY KEY AUTO_INCREMENT,
-  `type_name` VARCHAR(50) NOT NULL UNIQUE
-);
-
--- Table for Statuses
-CREATE TABLE `statuses` (
-  `status_id` INT PRIMARY KEY AUTO_INCREMENT,
-  `status_name` VARCHAR(50) NOT NULL UNIQUE
-);
-
--- Insert Room Types
-INSERT INTO `room_types` (`type_name`) VALUES
-('classroom'),
-('laboratory'),
-('office'),
-('auditorium'),
-('other');
-
--- Insert Statuses
-INSERT INTO `statuses` (`status_name`) VALUES
-('available'),
-('reserved'),
-('unavailable'),
-('active'),
-('inactive'),
-('unread'),
-('read'),
-('canceled'),
-('completed');
-
 -- Table for Rooms
 CREATE TABLE `rooms` (
   `room_id` INT PRIMARY KEY AUTO_INCREMENT,
   `floor_id` INT NOT NULL,
   `name` VARCHAR(255) NOT NULL,
-  `capacity` INT DEFAULT 1,
+  `capacity` INT DEFAULT 30,  -- Default capacity set to 30
   `room_type_id` INT,
   `color_id` INT,
+  `status_id` INT,  -- Referencing `statuses` table
   FOREIGN KEY (`floor_id`) REFERENCES `floors`(`floor_id`) ON DELETE CASCADE,
   FOREIGN KEY (`room_type_id`) REFERENCES `room_types`(`type_id`) ON DELETE SET NULL,
-  FOREIGN KEY (`color_id`) REFERENCES `colors`(`color_id`) ON DELETE SET NULL
+  FOREIGN KEY (`color_id`) REFERENCES `colors`(`color_id`) ON DELETE SET NULL,
+  FOREIGN KEY (`status_id`) REFERENCES `statuses`(`status_id`) ON DELETE SET NULL
 );
 
 -- Table for Resources
 CREATE TABLE `resources` (
   `resource_id` INT PRIMARY KEY AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
-  `quantity` INT DEFAULT 1,
-  `status` ENUM('available', 'reserved', 'unavailable') DEFAULT 'available'
-);
-
--- Table for Users
-CREATE TABLE `users` (
-  `user_id` INT PRIMARY KEY AUTO_INCREMENT,
-  `name` VARCHAR(255) NOT NULL,
-  `email` VARCHAR(255) UNIQUE NOT NULL,
-  `role` ENUM('teacher', 'admin', 'staff') DEFAULT 'staff',
-  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+  `quantity` INT DEFAULT 10,  -- Default quantity set to 10
+  `status_id` INT,  -- Referencing `statuses` table
+  FOREIGN KEY (`status_id`) REFERENCES `statuses`(`status_id`) ON DELETE SET NULL
 );
 
 -- Table for Classes
 CREATE TABLE `classes` (
   `class_id` INT PRIMARY KEY AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
-  `teacher_id` INT NOT NULL,
+  `teacher_id` INT,
   `schedule` VARCHAR(255) NOT NULL,
-  `status_id` INT,
-  FOREIGN KEY (`teacher_id`) REFERENCES `users`(`user_id`) ON DELETE SET NULL,
-  FOREIGN KEY (`status_id`) REFERENCES `statuses`(`status_id`) ON DELETE SET NULL
+  `status_id` INT DEFAULT 1,  -- Referencing `statuses` table (default: 'available')
+  CONSTRAINT fk_teacher_id FOREIGN KEY (`teacher_id`) REFERENCES `users`(`user_id`) ON DELETE SET NULL,
+  CONSTRAINT fk_status_id FOREIGN KEY (`status_id`) REFERENCES `statuses`(`status_id`) ON DELETE SET NULL
 );
 
 -- Table for Room Reservations
@@ -110,9 +113,10 @@ CREATE TABLE `room_reservations` (
   `room_id` INT NOT NULL,
   `start_time` DATETIME NOT NULL,
   `end_time` DATETIME NOT NULL,
-  `status` ENUM('reserved', 'canceled', 'completed') DEFAULT 'reserved',
+  `status_id` INT,  -- Referencing `statuses` table
   FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE,
-  FOREIGN KEY (`room_id`) REFERENCES `rooms`(`room_id`) ON DELETE CASCADE
+  FOREIGN KEY (`room_id`) REFERENCES `rooms`(`room_id`) ON DELETE CASCADE,
+  FOREIGN KEY (`status_id`) REFERENCES `statuses`(`status_id`) ON DELETE SET NULL
 );
 
 -- Table for Resource Reservations
@@ -122,19 +126,21 @@ CREATE TABLE `resource_reservations` (
   `resource_id` INT NOT NULL,
   `start_time` DATETIME NOT NULL,
   `end_time` DATETIME NOT NULL,
-  `status` ENUM('reserved', 'canceled', 'completed') DEFAULT 'reserved',
+  `status_id` INT,  -- Referencing `statuses` table
   FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE,
-  FOREIGN KEY (`resource_id`) REFERENCES `resources`(`resource_id`) ON DELETE CASCADE
+  FOREIGN KEY (`resource_id`) REFERENCES `resources`(`resource_id`) ON DELETE CASCADE,
+  FOREIGN KEY (`status_id`) REFERENCES `statuses`(`status_id`) ON DELETE SET NULL
 );
 
+-- Table for Access Logs
 CREATE TABLE `access_logs` (
-  `log_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `log_id` INT NOT NULL AUTO_INCREMENT,
   `user_id` INT NOT NULL,
   `action` VARCHAR(255) NOT NULL,
   `ip_address` VARCHAR(45) NOT NULL,
   `device_info` VARCHAR(255) NOT NULL, 
   `timestamp` DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE
+  PRIMARY KEY (`log_id`, `timestamp`)
 )
 PARTITION BY RANGE (TO_DAYS(`timestamp`)) (
   -- Partitions for 2025
@@ -171,9 +177,10 @@ CREATE TABLE `notifications` (
   `notification_id` INT PRIMARY KEY AUTO_INCREMENT,
   `user_id` INT NOT NULL,
   `message` TEXT NOT NULL,
-  `status` ENUM('unread', 'read') DEFAULT 'unread',
+  `status_id` INT,  -- Referencing `statuses` table
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE,
+  FOREIGN KEY (`status_id`) REFERENCES `statuses`(`status_id`) ON DELETE SET NULL
 );
 
 DELIMITER $$
