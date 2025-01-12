@@ -1,8 +1,8 @@
 <?php
 // controllers/RoomReservationController.php
 
-include_once '../config/database.php';
-include_once '../models/room_reservation.php';
+include_once ROOT_PATH . '/config/database.php';
+include_once ROOT_PATH . '/models/room_reservation.php';
 
 class RoomReservationController {
     private $db;

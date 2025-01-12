@@ -1,8 +1,8 @@
 <?php
 // controllers/BuildingController.php
 
-include_once '../config/database.php';
-include_once '../models/building.php';
+include_once ROOT_PATH . '/config/database.php';
+include_once ROOT_PATH . '/models/building.php';
 
 class BuildingController {
     private $db;

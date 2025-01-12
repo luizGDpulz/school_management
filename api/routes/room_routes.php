@@ -1,34 +1,37 @@
 <?php
 // routes/room_routes.php
 
-include_once '../controllers/room_controller.php'; // Importando o controlador
+require_once ROOT_PATH . '/controllers/room_controller.php'; // Importando o controlador
 
 function roomRoutes($request_method, $request_uri) {
     $controller = new RoomController();
 
     switch ($request_method) {
         case 'GET':
-            if (isset($request_uri[1])) {
-                echo $controller->readRoom($request_uri[1]);
+            if (isset($request_uri[2])) {
+                $response = $controller->readRoom($request_uri[2]);
             } else {
-                echo $controller->readRooms();
+                $response = $controller->readRooms();
             }
             break;
         case 'POST':
             $data = json_decode(file_get_contents("php://input"));
-            echo $controller->createRoom($data->floor_id, $data->name, $data->capacity, $data->room_type_id, $data->color_id, $data->status_id);
+            $response = $controller->createRoom($data->floor_id, $data->name, $data->capacity, $data->room_type_id, $data->color_id, $data->status_id);
             break;
         case 'PUT':
             $data = json_decode(file_get_contents("php://input"));
-            echo $controller->updateRoom($request_uri[1], $data->floor_id, $data->name, $data->capacity, $data->room_type_id, $data->color_id, $data->status_id);
+            $response = $controller->updateRoom($request_uri[2], $data->floor_id, $data->name, $data->capacity, $data->room_type_id, $data->color_id, $data->status_id);
             break;
         case 'DELETE':
-            echo $controller->deleteRoom($request_uri[1]);
+            $response = $controller->deleteRoom($request_uri[2]);
             break;
         default:
             http_response_code(405);
-            echo json_encode(["message" => "Method not allowed."]);
+            $response = ["message" => "Method not allowed."];
             break;
     }
+
+    // Return response in JSON format
+    echo json_encode($response ?? ["error" => "No response"], JSON_UNESCAPED_UNICODE);
 }
 ?> 

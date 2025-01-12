@@ -1,8 +1,8 @@
 <?php
 // controllers/ResourceController.php
 
-include_once '../config/database.php';
-include_once '../models/resource.php';
+include_once ROOT_PATH . '/config/database.php';
+include_once ROOT_PATH . '/models/resource.php';
 
 class ResourceController {
     private $db;

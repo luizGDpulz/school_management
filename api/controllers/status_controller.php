@@ -1,8 +1,8 @@
 <?php
 // controllers/StatusController.php
 
-include_once '../config/database.php';
-include_once '../models/status.php';
+include_once ROOT_PATH . '/config/database.php';
+include_once ROOT_PATH . '/models/status.php';
 
 class StatusController {
     private $db;

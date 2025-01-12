@@ -1,8 +1,8 @@
 <?php
 // controllers/NotificationController.php
 
-include_once '../config/database.php';
-include_once '../models/notification.php';
+include_once ROOT_PATH . '/config/database.php';
+include_once ROOT_PATH . '/models/notification.php';
 
 class NotificationController {
     private $db;

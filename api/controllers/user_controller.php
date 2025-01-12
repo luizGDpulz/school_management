@@ -2,8 +2,9 @@
 // controllers/user_controller.php
 
 // Include database and user model
-include_once '../config/database.php'; // Adjust the path as necessary
-include_once '../models/user.php'; // Adjust the path as necessary
+
+include_once ROOT_PATH . '/config/database.php'; 
+include_once ROOT_PATH . '/models/user.php'; 
 
 class UserController {
     private $db;

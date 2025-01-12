@@ -1,8 +1,8 @@
 <?php
 // controllers/RoomTypeController.php
 
-include_once '../config/database.php';
-include_once '../models/room_type.php';
+include_once ROOT_PATH . '/config/database.php';
+include_once ROOT_PATH . '/models/room_type.php';
 
 class RoomTypeController {
     private $db;

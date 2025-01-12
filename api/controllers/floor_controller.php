@@ -1,8 +1,8 @@
 <?php
 // controllers/FloorController.php
 
-include_once '../config/database.php';
-include_once '../models/floor.php';
+include_once ROOT_PATH . '/config/database.php';
+include_once ROOT_PATH . '/models/floor.php';
 
 class FloorController {
     private $db;

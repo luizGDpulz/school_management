@@ -1,8 +1,8 @@
 <?php
 // controllers/ClassController.php
 
-include_once '../config/database.php';
-include_once '../models/class.php';
+include_once ROOT_PATH . '/config/database.php';
+include_once ROOT_PATH . '/models/class.php';
 
 class ClassController {
     private $db;

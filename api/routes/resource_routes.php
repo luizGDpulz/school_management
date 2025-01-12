@@ -1,34 +1,37 @@
 <?php
 // routes/resource_routes.php
 
-include_once '../controllers/resource_controller.php'; // Importando o controlador
+require_once ROOT_PATH . '/controllers/resource_controller.php'; // Importando o controlador
 
 function resourceRoutes($request_method, $request_uri) {
     $controller = new ResourceController();
 
     switch ($request_method) {
         case 'GET':
-            if (isset($request_uri[1])) {
-                echo $controller->readResource($request_uri[1]);
+            if (isset($request_uri[2])) {
+                $response = $controller->readResource($request_uri[2]);
             } else {
-                echo $controller->readResources();
+                $response = $controller->readResources();
             }
             break;
         case 'POST':
             $data = json_decode(file_get_contents("php://input"));
-            echo $controller->createResource($data->name, $data->quantity, $data->status_id);
+            $response = $controller->createResource($data->name, $data->quantity, $data->status_id);
             break;
         case 'PUT':
             $data = json_decode(file_get_contents("php://input"));
-            echo $controller->updateResource($request_uri[1], $data->name, $data->quantity, $data->status_id);
+            $response = $controller->updateResource($request_uri[2], $data->name, $data->quantity, $data->status_id);
             break;
         case 'DELETE':
-            echo $controller->deleteResource($request_uri[1]);
+            $response = $controller->deleteResource($request_uri[2]);
             break;
         default:
             http_response_code(405);
-            echo json_encode(["message" => "Method not allowed."]);
+            $response = ["message" => "Method not allowed."];
             break;
     }
+
+    // Return response in JSON format
+    echo json_encode($response ?? ["error" => "No response"], JSON_UNESCAPED_UNICODE);
 }
 ?> 
