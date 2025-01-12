@@ -11,7 +11,6 @@ function userRoutes($request_method, $request_uri) {
             if (isset($request_uri[2])) {
                 $response = $controller->readUser($request_uri[2]);
             } else {
-                var_dump($request_uri[1]);
                 $response = $controller->readUsers();
             }
             break;
