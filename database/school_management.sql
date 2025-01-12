@@ -46,7 +46,8 @@ CREATE TABLE `users` (
   `user_id` INT PRIMARY KEY AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
   `email` VARCHAR(255) UNIQUE NOT NULL,
-  `role` ENUM('teacher', 'admin', 'staff') DEFAULT 'staff',
+  `role` ENUM('teacher', 'admin', 'staff', 'root') DEFAULT 'staff',  -- Adicionando a nova role 'root'
+  `password` VARCHAR(255) NOT NULL,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -9,6 +9,7 @@ class User {
     public $name;
     public $email;
     public $role;
+    public $password;
     public $created_at;
 
     public function __construct($db) {
@@ -17,7 +18,7 @@ class User {
 
     // Method to create a new user
     public function create() {
-        $query = "INSERT INTO " . $this->table_name . " SET name=:name, email=:email, role=:role";
+        $query = "INSERT INTO " . $this->table_name . " SET name=:name, email=:email, role=:role, password=:password";
 
         $stmt = $this->conn->prepare($query);
 
@@ -25,11 +26,13 @@ class User {
         $this->name = htmlspecialchars(strip_tags($this->name));
         $this->email = htmlspecialchars(strip_tags($this->email));
         $this->role = htmlspecialchars(strip_tags($this->role));
+        $this->password = htmlspecialchars(strip_tags($this->password));
 
         // Binding parameters
         $stmt->bindParam(":name", $this->name);
         $stmt->bindParam(":email", $this->email);
         $stmt->bindParam(":role", $this->role);
+        $stmt->bindParam(":password", $this->password);
 
         if ($stmt->execute()) {
             return true;

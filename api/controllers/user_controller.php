@@ -18,10 +18,11 @@ class UserController {
     }
 
     // Method to create a new user
-    public function createUser($name, $email, $role) {
+    public function createUser($name, $email, $role, $password) {
         $this->user->name = $name;
         $this->user->email = $email;
         $this->user->role = $role;
+        $this->user->password = password_hash($password, PASSWORD_DEFAULT);
 
         if ($this->user->create()) {
             return json_encode(["message" => "User created successfully."]);
