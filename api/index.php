@@ -20,6 +20,7 @@ require_once ROOT_PATH . '/routes/notification_routes.php';
 require_once ROOT_PATH . '/routes/resource_reservation_routes.php';
 require_once ROOT_PATH . '/routes/room_reservation_routes.php';
 require_once ROOT_PATH . '/routes/status_routes.php';
+require_once ROOT_PATH . '/test.php';
 
 // Get the request method and URI
 $request_method = $_SERVER['REQUEST_METHOD'];

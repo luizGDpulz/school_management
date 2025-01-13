@@ -81,6 +81,20 @@ class User {
         return false;
     }
 
+    // Method to update only the user's password
+    public function updatePassword() {
+        $query = "UPDATE " . $this->table_name . " SET password = :password WHERE user_id = :user_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":password", $this->password);
+        $stmt->bindParam(":user_id", $this->user_id);
+
+        if ($stmt->execute()) {
+            return true;
+        }
+
+        return false;
+    }
+
     // Method to delete a user
     public function delete() {
         $query = "DELETE FROM " . $this->table_name . " WHERE user_id = :user_id";

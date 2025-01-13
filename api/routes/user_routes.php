@@ -1,7 +1,7 @@
 <?php
 // routes/user_routes.php
 
-require_once ROOT_PATH . '/controllers/user_controller.php'; // Importando o controlador
+require_once ROOT_PATH . '/controllers/user_controller.php'; // Importing the controller
 
 function userRoutes($request_method, $request_uri) {
     $controller = new UserController();
@@ -16,11 +16,15 @@ function userRoutes($request_method, $request_uri) {
             break;
         case 'POST':
             $data = json_decode(file_get_contents("php://input"));
-            $response = $controller->createUser($data->name, $data->email, $data->role);
+            $response = $controller->createUser($data->name, $data->email, $data->role, $data->password);
             break;
         case 'PUT':
             $data = json_decode(file_get_contents("php://input"));
-            $response = $controller->updateUser($request_uri[2], $data->name, $data->email, $data->role);
+            if (isset($data->new_password)) {
+                $response = $controller->updateUserPassword($request_uri[2], $data->new_password);
+            } else {
+                $response = $controller->updateUser($request_uri[2], $data->name, $data->email, $data->role);
+            }
             break;
         case 'DELETE':
             $response = $controller->deleteUser($request_uri[2]);

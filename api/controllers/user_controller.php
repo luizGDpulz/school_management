@@ -1,10 +1,9 @@
 <?php
 // controllers/user_controller.php
 
-// Include database and user model
-
 include_once ROOT_PATH . '/config/database.php'; 
 include_once ROOT_PATH . '/models/user.php'; 
+include_once ROOT_PATH . '/utils/password_manager.php';
 
 class UserController {
     private $db;
@@ -22,7 +21,7 @@ class UserController {
         $this->user->name = $name;
         $this->user->email = $email;
         $this->user->role = $role;
-        $this->user->password = password_hash($password, PASSWORD_DEFAULT);
+        $this->user->password = PasswordManager::createPasswordHash($password);
 
         if ($this->user->create()) {
             return json_encode(["message" => "User created successfully."]);
@@ -56,7 +55,7 @@ class UserController {
         }
     }
 
-    // Method to update a user
+    // Method to update user attributes
     public function updateUser($user_id, $name, $email, $role) {
         $this->user->user_id = $user_id;
         $this->user->name = $name;
@@ -67,6 +66,18 @@ class UserController {
             return json_encode(["message" => "User updated successfully."]);
         } else {
             return json_encode(["message" => "Failed to update user."]);
+        }
+    }
+
+    // Method to update user password
+    public function updateUserPassword($user_id, $new_password) {
+        $this->user->user_id = $user_id;
+        $this->user->password = PasswordManager::createPasswordHash($new_password);
+
+        if ($this->user->updatePassword()) {
+            return json_encode(["message" => "Password updated successfully."]);
+        } else {
+            return json_encode(["message" => "Failed to update password."]);
         }
     }
 
