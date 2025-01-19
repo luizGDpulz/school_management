@@ -3,7 +3,6 @@
 
 include_once ROOT_PATH . '/config/database.php'; 
 include_once ROOT_PATH . '/models/user.php'; 
-include_once ROOT_PATH . '/utils/password_manager.php';
 
 class UserController {
     private $db;
@@ -16,12 +15,22 @@ class UserController {
         $this->user = new User($this->db);
     }
 
+    // Method to create a password hash
+    private function createPasswordHash($password) {
+        return password_hash($password, PASSWORD_ARGON2ID);
+    }
+
+    // Method to verify the password
+    private function verifyPassword($password, $hash) {
+        return password_verify($password, $hash);
+    }
+
     // Method to create a new user
     public function createUser($name, $email, $role, $password) {
         $this->user->name = $name;
         $this->user->email = $email;
         $this->user->role = $role;
-        $this->user->password = PasswordManager::createPasswordHash($password);
+        $this->user->password = $this->createPasswordHash($password); 
 
         if ($this->user->create()) {
             return json_encode(["message" => "User created successfully."]);
@@ -55,6 +64,19 @@ class UserController {
         }
     }
 
+    // Method to obtain the password of a user
+    public function getUserPassword($user_id) {
+        $this->user->user_id = $user_id;
+        $stmt = $this->user->readOne();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row) {
+            return json_encode(["password" => $row['password']]);
+        } else {
+            return json_encode(["message" => "User not found."]);
+        }
+    }
+
     // Method to update user attributes
     public function updateUser($user_id, $name, $email, $role) {
         $this->user->user_id = $user_id;
@@ -69,15 +91,33 @@ class UserController {
         }
     }
 
-    // Method to update user password
+    // Method to update the user's password
     public function updateUserPassword($user_id, $new_password) {
         $this->user->user_id = $user_id;
-        $this->user->password = PasswordManager::createPasswordHash($new_password);
+        $this->user->password = $this->createPasswordHash($new_password); // Using the hash method
 
         if ($this->user->updatePassword()) {
             return json_encode(["message" => "Password updated successfully."]);
         } else {
             return json_encode(["message" => "Failed to update password."]);
+        }
+    }
+
+    // Method to verify the user's password
+    public function verifyUserPassword($user_id, $password) {
+        $this->user->user_id = $user_id;
+        $stmt = $this->user->readOne();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row) {
+            // Check if the provided password matches the hash
+            if ($this->verifyPassword($password, $row['password'])) {
+                return json_encode(["message" => "Password is valid."]);
+            } else {
+                return json_encode(["message" => "Invalid password."]);
+            }
+        } else {
+            return json_encode(["message" => "User not found."]);
         }
     }
 
