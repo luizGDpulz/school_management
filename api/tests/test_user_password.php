@@ -1,6 +1,6 @@
 <?php
 // Include the necessary files
-include_once '../controllers/user_controller.php';
+require_once ROOT_PATH . '/controllers/user_controller.php';
 
 // Instantiate the UserController
 $userController = new UserController();

@@ -19,9 +19,9 @@ class ColorController {
         $this->color->hex_code = $hex_code;
 
         if ($this->color->create()) {
-            return json_encode(["message" => "Color created successfully."]);
+            return ["message" => "Color created successfully."];
         } else {
-            return json_encode(["message" => "Failed to create color."]);
+            return ["message" => "Failed to create color."];
         }
     }
 
@@ -33,7 +33,7 @@ class ColorController {
             $colors[] = $row;
         }
 
-        return json_encode($colors);
+        return $colors;
     }
 
     public function readColor($color_id) {
@@ -42,9 +42,9 @@ class ColorController {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return json_encode($row);
+            return $row;
         } else {
-            return json_encode(["message" => "Color not found."]);
+            return ["message" => "Color not found."];
         }
     }
 
@@ -54,9 +54,9 @@ class ColorController {
         $this->color->hex_code = $hex_code;
 
         if ($this->color->update()) {
-            return json_encode(["message" => "Color updated successfully."]);
+            return ["message" => "Color updated successfully."];
         } else {
-            return json_encode(["message" => "Failed to update color."]);
+            return ["message" => "Failed to update color."];
         }
     }
 
@@ -64,9 +64,9 @@ class ColorController {
         $this->color->color_id = $color_id;
 
         if ($this->color->delete()) {
-            return json_encode(["message" => "Color deleted successfully."]);
+            return ["message" => "Color deleted successfully."];
         } else {
-            return json_encode(["message" => "Failed to delete color."]);
+            return ["message" => "Failed to delete color."];
         }
     }
 }

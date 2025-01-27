@@ -21,9 +21,9 @@ class ClassController {
         $this->class->status_id = $status_id;
 
         if ($this->class->create()) {
-            return json_encode(["message" => "Class created successfully."]);
+            return ["message" => "Class created successfully."];
         } else {
-            return json_encode(["message" => "Failed to create class."]);
+            return ["message" => "Failed to create class."];
         }
     }
 
@@ -35,7 +35,7 @@ class ClassController {
             $classes[] = $row;
         }
 
-        return json_encode($classes);
+        return $classes;
     }
 
     public function readClass($class_id) {
@@ -44,9 +44,9 @@ class ClassController {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return json_encode($row);
+            return $row;
         } else {
-            return json_encode(["message" => "Class not found."]);
+            return ["message" => "Class not found."];
         }
     }
 
@@ -58,9 +58,9 @@ class ClassController {
         $this->class->status_id = $status_id;
 
         if ($this->class->update()) {
-            return json_encode(["message" => "Class updated successfully."]);
+            return ["message" => "Class updated successfully."];
         } else {
-            return json_encode(["message" => "Failed to update class."]);
+            return ["message" => "Failed to update class."];
         }
     }
 
@@ -68,9 +68,9 @@ class ClassController {
         $this->class->class_id = $class_id;
 
         if ($this->class->delete()) {
-            return json_encode(["message" => "Class deleted successfully."]);
+            return ["message" => "Class deleted successfully."];
         } else {
-            return json_encode(["message" => "Failed to delete class."]);
+            return ["message" => "Failed to delete class."];
         }
     }
 }

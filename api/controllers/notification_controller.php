@@ -20,9 +20,9 @@ class NotificationController {
         $this->notification->status_id = $status_id;
 
         if ($this->notification->create()) {
-            return json_encode(["message" => "Notification created successfully."]);
+            return ["message" => "Notification created successfully."];
         } else {
-            return json_encode(["message" => "Failed to create notification."]);
+            return ["message" => "Failed to create notification."];
         }
     }
 
@@ -34,7 +34,7 @@ class NotificationController {
             $notifications[] = $row;
         }
 
-        return json_encode($notifications);
+        return $notifications;
     }
 
     public function readNotification($notification_id) {
@@ -43,9 +43,9 @@ class NotificationController {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return json_encode($row);
+            return $row;
         } else {
-            return json_encode(["message" => "Notification not found."]);
+            return ["message" => "Notification not found."];
         }
     }
 
@@ -56,9 +56,9 @@ class NotificationController {
         $this->notification->status_id = $status_id;
 
         if ($this->notification->update()) {
-            return json_encode(["message" => "Notification updated successfully."]);
+            return ["message" => "Notification updated successfully."];
         } else {
-            return json_encode(["message" => "Failed to update notification."]);
+            return ["message" => "Failed to update notification."];
         }
     }
 
@@ -66,9 +66,9 @@ class NotificationController {
         $this->notification->notification_id = $notification_id;
 
         if ($this->notification->delete()) {
-            return json_encode(["message" => "Notification deleted successfully."]);
+            return ["message" => "Notification deleted successfully."];
         } else {
-            return json_encode(["message" => "Failed to delete notification."]);
+            return ["message" => "Failed to delete notification."];
         }
     }
 }

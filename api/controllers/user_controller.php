@@ -33,9 +33,9 @@ class UserController {
         $this->user->password = $this->createPasswordHash($password); 
 
         if ($this->user->create()) {
-            return json_encode(["message" => "User created successfully."]);
+            return ["message" => "User created successfully."];
         } else {
-            return json_encode(["message" => "Failed to create user."]);
+            return ["message" => "Failed to create user."];
         }
     }
 
@@ -48,7 +48,7 @@ class UserController {
             $users[] = $row;
         }
 
-        return json_encode($users);
+        return $users;
     }
 
     // Method to read a specific user
@@ -58,9 +58,9 @@ class UserController {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return json_encode($row);
+            return $row;
         } else {
-            return json_encode(["message" => "User not found."]);
+            return ["message" => "User not found."];
         }
     }
 
@@ -71,9 +71,9 @@ class UserController {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return json_encode(["password" => $row['password']]);
+            return ["password" => $row['password']];
         } else {
-            return json_encode(["message" => "User not found."]);
+            return ["message" => "User not found."];
         }
     }
 
@@ -85,9 +85,9 @@ class UserController {
         $this->user->role = $role;
 
         if ($this->user->update()) {
-            return json_encode(["message" => "User updated successfully."]);
+            return ["message" => "User updated successfully."];
         } else {
-            return json_encode(["message" => "Failed to update user."]);
+            return ["message" => "Failed to update user."];
         }
     }
 
@@ -97,9 +97,9 @@ class UserController {
         $this->user->password = $this->createPasswordHash($new_password); // Using the hash method
 
         if ($this->user->updatePassword()) {
-            return json_encode(["message" => "Password updated successfully."]);
+            return ["message" => "Password updated successfully."];
         } else {
-            return json_encode(["message" => "Failed to update password."]);
+            return ["message" => "Failed to update password."];
         }
     }
 
@@ -112,12 +112,12 @@ class UserController {
         if ($row) {
             // Check if the provided password matches the hash
             if ($this->verifyPassword($password, $row['password'])) {
-                return json_encode(["message" => "Password is valid."]);
+                return ["message" => "Password is valid."];
             } else {
-                return json_encode(["message" => "Invalid password."]);
+                return ["message" => "Invalid password."];
             }
         } else {
-            return json_encode(["message" => "User not found."]);
+            return ["message" => "User not found."];
         }
     }
 
@@ -126,9 +126,9 @@ class UserController {
         $this->user->user_id = $user_id;
 
         if ($this->user->delete()) {
-            return json_encode(["message" => "User deleted successfully."]);
+            return ["message" => "User deleted successfully."];
         } else {
-            return json_encode(["message" => "Failed to delete user."]);
+            return ["message" => "Failed to delete user."];
         }
     }
 }

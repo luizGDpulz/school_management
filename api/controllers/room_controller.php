@@ -23,9 +23,9 @@ class RoomController {
         $this->room->status_id = $status_id;
 
         if ($this->room->create()) {
-            return json_encode(["message" => "Room created successfully."]);
+            return ["message" => "Room created successfully."];
         } else {
-            return json_encode(["message" => "Failed to create room."]);
+            return ["message" => "Failed to create room."];
         }
     }
 
@@ -37,7 +37,7 @@ class RoomController {
             $rooms[] = $row;
         }
 
-        return json_encode($rooms);
+        return $rooms;
     }
 
     public function readRoom($room_id) {
@@ -46,9 +46,9 @@ class RoomController {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return json_encode($row);
+            return $row;
         } else {
-            return json_encode(["message" => "Room not found."]);
+            return ["message" => "Room not found."];
         }
     }
 
@@ -62,9 +62,9 @@ class RoomController {
         $this->room->status_id = $status_id;
 
         if ($this->room->update()) {
-            return json_encode(["message" => "Room updated successfully."]);
+            return ["message" => "Room updated successfully."];
         } else {
-            return json_encode(["message" => "Failed to update room."]);
+            return ["message" => "Failed to update room."];
         }
     }
 
@@ -72,9 +72,9 @@ class RoomController {
         $this->room->room_id = $room_id;
 
         if ($this->room->delete()) {
-            return json_encode(["message" => "Room deleted successfully."]);
+            return ["message" => "Room deleted successfully."];
         } else {
-            return json_encode(["message" => "Failed to delete room."]);
+            return ["message" => "Failed to delete room."];
         }
     }
 }

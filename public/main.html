@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ===== CSS ===== -->
+    <link rel="stylesheet" href="./assets/css/styles.css">
+    <link rel="stylesheet" href="./assets/css/users.css">
+
+    <!-- ===== JS ===== -->
+    <script src="./assets/js/main.js" defer></script>
+    <script src="./assets/js/infrastructure.js" defer></script>
+    <script src="./assets/js/users.js"></script>
+
+    <!-- ===== jQuery ===== -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- ===== Tailwind ===== -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <!-- ===== Boxicons ===== -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+    <title>School Management</title>
+</head>
+<body>
+    <header class="header close">
+        <div class="header-content">
+            <h1 class="header-title">Dashboard</h1>
+        </div>
+    </header>
+    
+    <nav class="sidebar close">
+        <header>
+            <div class="image-text">
+                <span class="image">
+                    <img src="./assets/images/logo.png" alt="logo">
+                </span>
+                <div class="text header-text">
+                    <span class="name">School Management</span>
+                </div>
+            </div>
+
+            <i class='bx bx-chevron-right toggle'></i>
+        </header>
+
+        <div class="menu-bar">
+            <div class="menu">
+                <li class="search-box">
+                    <i class='bx bx-search icon' ></i>
+                    <input type="text" placeholder="Search...">
+                </li>
+                <ul class="menu-links">
+
+                    <li class="nav-link">
+                        <a href="#" class="toggle-dashboard">
+                            <i class='bx bx-home-alt icon'></i>
+                            <span class="text nav-text">Dashboard</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-link">
+                        <a href="#" class="toggle-infrastructure">
+                            <i class='bx bx-building icon'></i>
+                            <span class="text nav-text">Infrastructure</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-link">
+                        <a href="#" class="toggle-resources">
+                            <i class='bx bx-folder icon'></i>
+                            <span class="text nav-text">Resources</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-link">
+                        <a href="#" class="toggle-users">
+                            <i class='bx bx-user icon'></i>
+                            <span class="text nav-text">Users</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-link">
+                        <a href="#" class="toggle-class">
+                            <i class='bx bx-book icon'></i>
+                            <span class="text nav-text">Class</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-link">
+                        <a href="#" class="toggle-notifications">
+                            <i class='bx bx-bell icon'></i>
+                            <span class="text nav-text">Notifications</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="bottom-content">
+                <li class="">
+                    <a href="#">
+                        <i class='bx bx-log-out icon' ></i>
+                        <span class="text nav-text">Logout</span>
+                    </a>
+                </li>
+
+                <li class="mode">
+                    <div class="moon-sun">
+                        <i class='bx bx-moon icon moon' ></i>
+                        <i class='bx bx-sun icon sun' ></i>
+                    </div>
+                    <span class="mode-text text">Dark Mode</span>
+
+                    <div class="toggle-switch">
+                        <span class="switch"></span>
+                    </div>
+                </li>
+            </div>
+        </div>
+    </nav>
+
+    <section class="home">
+        <!-- Contêiner para o Dashboard -->
+        <div id="dashboard" class="content-section" style="display: block;">
+            <div id="dataField" class="dashboard-content"></div> <!-- Contêiner para exibir reservas -->
+        </div>
+
+        <!-- Contêiner para Infrastructure -->
+        <div id="infrastructure" class="content-section" style="display: none;">
+
+            <div class="infra-menu">
+                <button id="showBuildings">Buildings</button>
+                <button id="showRooms">Rooms</button>
+                <button id="showFloors">Floors</button>
+            </div>
+
+            <div id="formContainer">
+                <!-- Formulário dinâmico será inserido aqui -->
+            </div>
+
+            <div id="dataTableContainer">
+                <!-- Tabela dinâmicas será inserida aqui -->
+            </div>
+        </div>
+
+        <!-- Contêiner para Resources -->
+        <div id="resources" class="content-section" style="display: none;">
+            <!-- Conteúdo dos recursos -->
+        </div>
+
+        <!-- Contêiner para Users -->
+        <div id="users" class="content-section container" style="display: none;">
+            <h2>Usuários</h2>
+            <button onclick="showUserModal()">Novo Usuário</button>
+            <table id="userTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Função</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <!-- Modal Usuário -->
+            <div id="userModal">
+                <div class="modal-content">
+                    <h3>Usuário</h3>
+                    <form id="userForm">
+                        <input type="hidden" id="userId">
+                        <div>
+                            <label>Nome</label>
+                            <input type="text" id="userName" required>
+                        </div>
+                        <div>
+                            <label>Email</label>
+                            <input type="email" id="userEmail" required>
+                        </div>
+                        <div>
+                            <label>Função</label>
+                            <input type="text" id="userRole" required>
+                        </div>
+                        <button type="button" onclick="saveUser()">Salvar</button>
+                        <button type="button" onclick="closeUserModal()">Cancelar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contêiner para Class -->
+        <div id="class" class="content-section" style="display: none;">
+            <!-- Conteúdo da classe -->
+        </div>
+
+        <!-- Contêiner para Notifications -->
+        <div id="notifications" class="content-section" style="display: none;">
+            <!-- Conteúdo das notificações -->
+        </div>
+    </section>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+</html> 

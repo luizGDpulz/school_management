@@ -21,9 +21,9 @@ class BuildingController {
         $this->building->color_id = $color_id;
 
         if ($this->building->create()) {
-            return json_encode(["message" => "Building created successfully."]);
+            return ["message" => "Building created successfully."];
         } else {
-            return json_encode(["message" => "Failed to create building."]);
+            return ["message" => "Failed to create building."];
         }
     }
 
@@ -35,7 +35,7 @@ class BuildingController {
             $buildings[] = $row;
         }
 
-        return json_encode($buildings);
+        return $buildings;
     }
 
     public function readBuilding($building_id) {
@@ -44,9 +44,9 @@ class BuildingController {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return json_encode($row);
+            return $row;
         } else {
-            return json_encode(["message" => "Building not found."]);
+            return ["message" => "Building not found."];
         }
     }
 
@@ -58,9 +58,9 @@ class BuildingController {
         $this->building->color_id = $color_id;
 
         if ($this->building->update()) {
-            return json_encode(["message" => "Building updated successfully."]);
+            return ["message" => "Building updated successfully."];
         } else {
-            return json_encode(["message" => "Failed to update building."]);
+            return ["message" => "Failed to update building."];
         }
     }
 
@@ -68,9 +68,9 @@ class BuildingController {
         $this->building->building_id = $building_id;
 
         if ($this->building->delete()) {
-            return json_encode(["message" => "Building deleted successfully."]);
+            return ["message" => "Building deleted successfully."];
         } else {
-            return json_encode(["message" => "Failed to delete building."]);
+            return ["message" => "Failed to delete building."];
         }
     }
 }

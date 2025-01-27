@@ -20,7 +20,6 @@ require_once ROOT_PATH . '/routes/notification_routes.php';
 require_once ROOT_PATH . '/routes/resource_reservation_routes.php';
 require_once ROOT_PATH . '/routes/room_reservation_routes.php';
 require_once ROOT_PATH . '/routes/status_routes.php';
-require_once ROOT_PATH . '/tests/test_user_password.php';
 
 // Get the request method and URI
 $request_method = $_SERVER['REQUEST_METHOD'];
@@ -66,9 +65,6 @@ switch ($resource) {
         break;
     case 'statuses':
         statusRoutes($request_method, $request_uri);
-        break;
-    case 'test':
-        testUserPassword();
         break;
     default:
         http_response_code(404);

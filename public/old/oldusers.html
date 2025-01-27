@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Usuários</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/styles.css"> <!-- Corrigido para o caminho correto -->
+</head>
+<body>
+    <nav class="bg-gray-800 p-4">
+        <div class="container mx-auto">
+            <h1 class="text-white text-lg">Sistema de Gestão de Usuários</h1>
+        </div>
+    </nav>
+
+    <div class="container mx-auto mt-4">
+        <h2 class="text-2xl font-bold mb-4">Usuários</h2>
+        <button class="bg-blue-500 text-white px-4 py-2 rounded" onclick="showUserModal()">Novo Usuário</button>
+        <table id="userTable" class="min-w-full bg-white border border-gray-300 mt-4">
+            <thead>
+                <tr>
+                    <th class="py-2 px-4 border-b">ID</th>
+                    <th class="py-2 px-4 border-b">Nome</th>
+                    <th class="py-2 px-4 border-b">Email</th>
+                    <th class="py-2 px-4 border-b">Função</th>
+                    <th class="py-2 px-4 border-b">Ações</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- Modal Usuário -->
+    <div id="userModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white p-4 rounded shadow-lg">
+            <h3 class="text-lg font-bold">Usuário</h3>
+            <form id="userForm">
+                <input type="hidden" id="userId">
+                <div class="mb-4">
+                    <label class="block">Nome</label>
+                    <input type="text" id="userName" class="border rounded w-full" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block">Email</label>
+                    <input type="email" id="userEmail" class="border rounded w-full" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block">Função</label>
+                    <input type="text" id="userRole" class="border rounded w-full" required>
+                </div>
+                <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded" onclick="saveUser()">Salvar</button>
+                <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded" onclick="closeUserModal()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../assets/js/users.js"></script> <!-- Corrigido para o caminho correto -->
+</body>
+</html> 

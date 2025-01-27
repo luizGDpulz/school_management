@@ -18,9 +18,9 @@ class RoomTypeController {
         $this->roomType->type_name = $type_name;
 
         if ($this->roomType->create()) {
-            return json_encode(["message" => "Room type created successfully."]);
+            return ["message" => "Room type created successfully."];
         } else {
-            return json_encode(["message" => "Failed to create room type."]);
+            return ["message" => "Failed to create room type."];
         }
     }
 
@@ -32,7 +32,7 @@ class RoomTypeController {
             $roomTypes[] = $row;
         }
 
-        return json_encode($roomTypes);
+        return $roomTypes;
     }
 
     public function readRoomType($type_id) {
@@ -41,9 +41,9 @@ class RoomTypeController {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return json_encode($row);
+            return $row;
         } else {
-            return json_encode(["message" => "Room type not found."]);
+            return ["message" => "Room type not found."];
         }
     }
 
@@ -52,9 +52,9 @@ class RoomTypeController {
         $this->roomType->type_name = $type_name;
 
         if ($this->roomType->update()) {
-            return json_encode(["message" => "Room type updated successfully."]);
+            return ["message" => "Room type updated successfully."];
         } else {
-            return json_encode(["message" => "Failed to update room type."]);
+            return ["message" => "Failed to update room type."];
         }
     }
 
@@ -62,9 +62,9 @@ class RoomTypeController {
         $this->roomType->type_id = $type_id;
 
         if ($this->roomType->delete()) {
-            return json_encode(["message" => "Room type deleted successfully."]);
+            return ["message" => "Room type deleted successfully."];
         } else {
-            return json_encode(["message" => "Failed to delete room type."]);
+            return ["message" => "Failed to delete room type."];
         }
     }
 }

@@ -18,9 +18,9 @@ class StatusController {
         $this->status->status_name = $status_name;
 
         if ($this->status->create()) {
-            return json_encode(["message" => "Status created successfully."]);
+            return ["message" => "Status created successfully."];
         } else {
-            return json_encode(["message" => "Failed to create status."]);
+            return ["message" => "Failed to create status."];
         }
     }
 
@@ -32,7 +32,7 @@ class StatusController {
             $statuses[] = $row;
         }
 
-        return json_encode($statuses);
+        return $statuses;
     }
 
     public function readStatus($status_id) {
@@ -41,9 +41,9 @@ class StatusController {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return json_encode($row);
+            return $row;
         } else {
-            return json_encode(["message" => "Status not found."]);
+            return ["message" => "Status not found."];
         }
     }
 
@@ -52,9 +52,9 @@ class StatusController {
         $this->status->status_name = $status_name;
 
         if ($this->status->update()) {
-            return json_encode(["message" => "Status updated successfully."]);
+            return ["message" => "Status updated successfully."];
         } else {
-            return json_encode(["message" => "Failed to update status."]);
+            return ["message" => "Failed to update status."];
         }
     }
 
@@ -62,9 +62,9 @@ class StatusController {
         $this->status->status_id = $status_id;
 
         if ($this->status->delete()) {
-            return json_encode(["message" => "Status deleted successfully."]);
+            return ["message" => "Status deleted successfully."];
         } else {
-            return json_encode(["message" => "Failed to delete status."]);
+            return ["message" => "Failed to delete status."];
         }
     }
 }

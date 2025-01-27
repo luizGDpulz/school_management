@@ -21,9 +21,9 @@ class FloorController {
         $this->floor->color_id = $color_id;
 
         if ($this->floor->create()) {
-            return json_encode(["message" => "Floor created successfully."]);
+            return ["message" => "Floor created successfully."];
         } else {
-            return json_encode(["message" => "Failed to create floor."]);
+            return ["message" => "Failed to create floor."];
         }
     }
 
@@ -35,7 +35,7 @@ class FloorController {
             $floors[] = $row;
         }
 
-        return json_encode($floors);
+        return $floors;
     }
 
     public function readFloor($floor_id) {
@@ -44,9 +44,9 @@ class FloorController {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return json_encode($row);
+            return $row;
         } else {
-            return json_encode(["message" => "Floor not found."]);
+            return ["message" => "Floor not found."];
         }
     }
 
@@ -58,9 +58,9 @@ class FloorController {
         $this->floor->color_id = $color_id;
 
         if ($this->floor->update()) {
-            return json_encode(["message" => "Floor updated successfully."]);
+            return ["message" => "Floor updated successfully."];
         } else {
-            return json_encode(["message" => "Failed to update floor."]);
+            return ["message" => "Failed to update floor."];
         }
     }
 
@@ -68,9 +68,9 @@ class FloorController {
         $this->floor->floor_id = $floor_id;
 
         if ($this->floor->delete()) {
-            return json_encode(["message" => "Floor deleted successfully."]);
+            return ["message" => "Floor deleted successfully."];
         } else {
-            return json_encode(["message" => "Failed to delete floor."]);
+            return ["message" => "Failed to delete floor."];
         }
     }
 }

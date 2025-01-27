@@ -22,9 +22,9 @@ class RoomReservationController {
         $this->roomReservation->status_id = $status_id;
 
         if ($this->roomReservation->create()) {
-            return json_encode(["message" => "Room reservation created successfully."]);
+            return ["message" => "Room reservation created successfully."];
         } else {
-            return json_encode(["message" => "Failed to create room reservation."]);
+            return ["message" => "Failed to create room reservation."];
         }
     }
 
@@ -36,7 +36,7 @@ class RoomReservationController {
             $reservations[] = $row;
         }
 
-        return json_encode($reservations);
+        return $reservations;
     }
 
     public function readRoomReservation($reservation_id) {
@@ -45,9 +45,9 @@ class RoomReservationController {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return json_encode($row);
+            return $row;
         } else {
-            return json_encode(["message" => "Room reservation not found."]);
+            return ["message" => "Room reservation not found."];
         }
     }
 
@@ -60,9 +60,9 @@ class RoomReservationController {
         $this->roomReservation->status_id = $status_id;
 
         if ($this->roomReservation->update()) {
-            return json_encode(["message" => "Room reservation updated successfully."]);
+            return ["message" => "Room reservation updated successfully."];
         } else {
-            return json_encode(["message" => "Failed to update room reservation."]);
+            return ["message" => "Failed to update room reservation."];
         }
     }
 
@@ -70,9 +70,9 @@ class RoomReservationController {
         $this->roomReservation->reservation_id = $reservation_id;
 
         if ($this->roomReservation->delete()) {
-            return json_encode(["message" => "Room reservation deleted successfully."]);
+            return ["message" => "Room reservation deleted successfully."];
         } else {
-            return json_encode(["message" => "Failed to delete room reservation."]);
+            return ["message" => "Failed to delete room reservation."];
         }
     }
 }

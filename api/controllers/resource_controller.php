@@ -20,9 +20,9 @@ class ResourceController {
         $this->resource->status_id = $status_id;
 
         if ($this->resource->create()) {
-            return json_encode(["message" => "Resource created successfully."]);
+            return ["message" => "Resource created successfully."];
         } else {
-            return json_encode(["message" => "Failed to create resource."]);
+            return ["message" => "Failed to create resource."];
         }
     }
 
@@ -34,7 +34,7 @@ class ResourceController {
             $resources[] = $row;
         }
 
-        return json_encode($resources);
+        return $resources;
     }
 
     public function readResource($resource_id) {
@@ -43,9 +43,9 @@ class ResourceController {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return json_encode($row);
+            return $row;
         } else {
-            return json_encode(["message" => "Resource not found."]);
+            return ["message" => "Resource not found."];
         }
     }
 
@@ -56,9 +56,9 @@ class ResourceController {
         $this->resource->status_id = $status_id;
 
         if ($this->resource->update()) {
-            return json_encode(["message" => "Resource updated successfully."]);
+            return ["message" => "Resource updated successfully."];
         } else {
-            return json_encode(["message" => "Failed to update resource."]);
+            return ["message" => "Failed to update resource."];
         }
     }
 
@@ -66,9 +66,9 @@ class ResourceController {
         $this->resource->resource_id = $resource_id;
 
         if ($this->resource->delete()) {
-            return json_encode(["message" => "Resource deleted successfully."]);
+            return ["message" => "Resource deleted successfully."];
         } else {
-            return json_encode(["message" => "Failed to delete resource."]);
+            return ["message" => "Failed to delete resource."];
         }
     }
 }

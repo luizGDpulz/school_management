@@ -22,9 +22,9 @@ class ResourceReservationController {
         $this->resourceReservation->status_id = $status_id;
 
         if ($this->resourceReservation->create()) {
-            return json_encode(["message" => "Resource reservation created successfully."]);
+            return ["message" => "Resource reservation created successfully."];
         } else {
-            return json_encode(["message" => "Failed to create resource reservation."]);
+            return ["message" => "Failed to create resource reservation."];
         }
     }
 
@@ -36,7 +36,7 @@ class ResourceReservationController {
             $reservations[] = $row;
         }
 
-        return json_encode($reservations);
+        return $reservations;
     }
 
     public function readResourceReservation($reservation_id) {
@@ -45,9 +45,9 @@ class ResourceReservationController {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return json_encode($row);
+            return $row;
         } else {
-            return json_encode(["message" => "Resource reservation not found."]);
+            return ["message" => "Resource reservation not found."];
         }
     }
 
@@ -60,9 +60,9 @@ class ResourceReservationController {
         $this->resourceReservation->status_id = $status_id;
 
         if ($this->resourceReservation->update()) {
-            return json_encode(["message" => "Resource reservation updated successfully."]);
+            return ["message" => "Resource reservation updated successfully."];
         } else {
-            return json_encode(["message" => "Failed to update resource reservation."]);
+            return ["message" => "Failed to update resource reservation."];
         }
     }
 
@@ -70,9 +70,9 @@ class ResourceReservationController {
         $this->resourceReservation->reservation_id = $reservation_id;
 
         if ($this->resourceReservation->delete()) {
-            return json_encode(["message" => "Resource reservation deleted successfully."]);
+            return ["message" => "Resource reservation deleted successfully."];
         } else {
-            return json_encode(["message" => "Failed to delete resource reservation."]);
+            return ["message" => "Failed to delete resource reservation."];
         }
     }
 }

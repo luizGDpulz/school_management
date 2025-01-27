@@ -20,11 +20,7 @@ function userRoutes($request_method, $request_uri) {
             break;
         case 'PUT':
             $data = json_decode(file_get_contents("php://input"));
-            if (isset($data->new_password)) {
-                $response = $controller->updateUserPassword($request_uri[2], $data->new_password);
-            } else {
-                $response = $controller->updateUser($request_uri[2], $data->name, $data->email, $data->role);
-            }
+            $response = $controller->updateUser($request_uri[2], $data->name, $data->email, $data->role);
             break;
         case 'DELETE':
             $response = $controller->deleteUser($request_uri[2]);
