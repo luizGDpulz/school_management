@@ -105,5 +105,9 @@ class User {
         }
         return false;
     }
+
+    public function getRoles() {
+        return ['teacher', 'admin', 'staff', 'root'];
+    }
 }
 ?>

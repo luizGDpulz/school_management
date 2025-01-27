@@ -29,8 +29,21 @@ async function loadUsers() {
     }
 }
 
+// Função para carregar roles
+async function loadRoles() {
+    const roles = ['teacher', 'admin', 'staff', 'root']; 
+
+    const roleSelect = $('#userRole');
+    roleSelect.empty(); 
+
+    roles.forEach(role => {
+        roleSelect.append(new Option(role.charAt(0).toUpperCase() + role.slice(1), role)); // Adiciona cada role como opção
+    });
+}
+
 // Função para mostrar o modal de usuário
 function showUserModal() {
+    loadRoles(); // Carrega as roles
     $('#userModal').show();
 }
 
@@ -45,12 +58,13 @@ async function saveUser() {
     const user = {
         name: $('#userName').val(),
         email: $('#userEmail').val(),
-        role: $('#userRole').val()
+        role: $('#userRole').val(),
+        password: $('#userPassword').val()
     };
 
     const id = $('#userId').val();
     const method = id ? 'PUT' : 'POST';
-    const url = id ? `${API_URL}/${id}` : API_URL;
+    const url = id ? `${API_URL}/users/${id}` : `${API_URL}/users`;
 
     try {
         const response = await fetch(url, {
@@ -65,10 +79,10 @@ async function saveUser() {
             closeUserModal();
             loadUsers();
         } else {
-            alert('Erro ao salvar usuário');
+            alert('Error saving user');
         }
     } catch (error) {
-        console.error('Erro ao salvar usuário:', error);
+        console.error('Error saving user:', error);
     }
 }
 
@@ -89,7 +103,7 @@ function editUser(id) {
 async function deleteUser(id) {
     if (confirm('Deseja realmente excluir este usuário?')) {
         try {
-            const response = await fetch(`${API_URL}/${id}`, {
+            const response = await fetch(`${API_URL}/users/${id}`, {
                 method: 'DELETE'
             });
 

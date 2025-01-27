@@ -27,6 +27,12 @@ class UserController {
 
     // Method to create a new user
     public function createUser($name, $email, $role, $password) {
+        $validRoles = $this->user->getRoles(); 
+
+        if (!in_array($role, $validRoles)) {
+            return ["message" => "Invalid role."];
+        }
+
         $this->user->name = $name;
         $this->user->email = $email;
         $this->user->role = $role;
@@ -130,6 +136,11 @@ class UserController {
         } else {
             return ["message" => "Failed to delete user."];
         }
+    }
+
+    // Method to get all roles
+    public function getRoles() {
+        return $this->user->getRoles();
     }
 }
 ?>

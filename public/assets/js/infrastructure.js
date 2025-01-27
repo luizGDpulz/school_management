@@ -177,93 +177,265 @@ document.addEventListener("DOMContentLoaded", () => {
         dataTableContainer.innerHTML = tableHTML;
     }
 
-    // Funções para editar e deletar
-    window.editBuilding = function(building_id) {
-        // Implementar lógica de edição
-        const name = prompt("Enter new name:");
-        const address = prompt("Enter new address:");
-        const floors_number = prompt("Enter new number of floors:");
-        const color_id = prompt("Enter new color ID:");
+    // ==========================
+    // Funções para Gerenciar Edifícios, Andares e Salas
+    // ==========================
 
-        fetch(`${API_URL}/buildings/${building_id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ name, address, floors_number, color_id })
-        }).then(response => response.json()).then(data => {
-            alert(data.message);
-            fetchBuildings(); // Atualiza a tabela
+    // Função genérica para carregar dados de uma tabela
+    async function loadData(url, tableBodyId) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`Failed to load data from ${url}`);
+            const data = await response.json();
+            const tableBody = $(tableBodyId);
+            tableBody.empty();
+
+            data.forEach(item => {
+                const row = createRow(item);
+                tableBody.append(row);
+            });
+        } catch (error) {
+            console.error(error);
+            alert(error.message);
+        }
+    }
+
+    // Função para criar uma linha na tabela de edifícios
+    function createRow(building) {
+        return `
+            <tr>
+                <td>${building.building_id}</td>
+                <td>${building.name}</td>
+                <td>${building.address}</td>
+                <td>${building.floors_number}</td>
+                <td>
+                    <button onclick="editBuilding(${building.building_id})">Edit</button>
+                    <button onclick="deleteBuilding(${building.building_id})">Delete</button>
+                </td>
+            </tr>
+        `;
+    }
+
+    // Função para carregar edifícios
+    async function loadBuildings() {
+        await loadData(`${API_URL}/buildings`, '#buildingTable tbody');
+    }
+
+    // Função para carregar andares
+    async function loadFloors() {
+        await loadData(`${API_URL}/floors`, '#floorTable tbody');
+    }
+
+    // Função para carregar salas
+    async function loadRooms() {
+        await loadData(`${API_URL}/rooms`, '#roomTable tbody');
+    }
+
+    // Função genérica para salvar dados
+    async function saveData(url, data, modalCloseFunction) {
+        const method = data.id ? 'PUT' : 'POST';
+        try {
+            const response = await fetch(url, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) throw new Error(`Failed to save data to ${url}`);
+            modalCloseFunction();
+            loadData(url.replace(/\/[^/]+$/, ''), `#${url.split('/').pop()}Table tbody`); // Atualiza a tabela correspondente
+        } catch (error) {
+            console.error(error);
+            alert(error.message);
+        }
+    }
+
+    // Função para salvar edifício
+    async function saveBuilding() {
+        const building = {
+            id: $('#buildingId').val(),
+            name: $('#buildingName').val(),
+            address: $('#buildingAddress').val(),
+            floors_number: $('#buildingFloors').val(),
+            color_id: $('#buildingColorId').val()
+        };
+        await saveData(`${API_URL}/buildings`, building, closeBuildingModal);
+    }
+
+    // Função para salvar andar
+    async function saveFloor() {
+        const floor = {
+            id: $('#floorId').val(),
+            building_id: $('#floorBuildingId').val(),
+            floor_number: $('#floorNumber').val()
+        };
+        await saveData(`${API_URL}/floors`, floor, closeFloorModal);
+    }
+
+    // Função para salvar sala
+    async function saveRoom() {
+        const room = {
+            id: $('#roomId').val(),
+            floor_id: $('#roomFloorId').val(),
+            name: $('#roomName').val(),
+            capacity: $('#roomCapacity').val()
+        };
+        await saveData(`${API_URL}/rooms`, room, closeRoomModal);
+    }
+
+    // Função genérica para editar dados
+    function editData(url, id, modalShowFunction, modalDataFunction) {
+        fetch(`${url}/${id}`)
+            .then(response => {
+                if (!response.ok) throw new Error(`Failed to load data from ${url}`);
+                return response.json();
+            })
+            .then(data => {
+                modalDataFunction(data);
+                modalShowFunction();
+            })
+            .catch(error => {
+                console.error(error);
+                alert(error.message);
+            });
+    }
+
+    // Função para editar edifício
+    function editBuilding(id) {
+        editData(`${API_URL}/buildings`, id, () => $('#buildingModal').show(), (building) => {
+            $('#buildingId').val(building.building_id);
+            $('#buildingName').val(building.name);
+            $('#buildingAddress').val(building.address);
+            $('#buildingFloors').val(building.floors_number);
+            $('#buildingColorId').val(building.color_id);
         });
-    };
+    }
 
-    window.deleteBuilding = function(building_id) {
-        fetch(`${API_URL}/buildings/${building_id}`, {
-            method: 'DELETE'
-        }).then(response => response.json()).then(data => {
-            alert(data.message);
-            fetchBuildings(); // Atualiza a tabela
+    // Função para editar andar
+    function editFloor(id) {
+        editData(`${API_URL}/floors`, id, () => $('#floorModal').show(), (floor) => {
+            $('#floorId').val(floor.floor_id);
+            $('#floorBuildingId').val(floor.building_id);
+            $('#floorNumber').val(floor.floor_number);
         });
-    };
+    }
 
-    window.editRoom = function(room_id) {
-        // Implementar lógica de edição
-        const name = prompt("Enter new name:");
-        const capacity = prompt("Enter new capacity:");
-        const type = prompt("Enter new room type ID:");
-        const color_id = prompt("Enter new color ID:");
-
-        fetch(`${API_URL}/rooms/${room_id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ name, capacity, type, color_id })
-        }).then(response => response.json()).then(data => {
-            alert(data.message);
-            fetchRooms(); // Atualiza a tabela
+    // Função para editar sala
+    function editRoom(id) {
+        editData(`${API_URL}/rooms`, id, () => $('#roomModal').show(), (room) => {
+            $('#roomId').val(room.room_id);
+            $('#roomFloorId').val(room.floor_id);
+            $('#roomName').val(room.name);
+            $('#roomCapacity').val(room.capacity);
         });
-    };
+    }
 
-    window.deleteRoom = function(room_id) {
-        fetch(`${API_URL}/rooms/${room_id}`, {
-            method: 'DELETE'
-        }).then(response => response.json()).then(data => {
-            alert(data.message);
-            fetchRooms(); // Atualiza a tabela
-        });
-    };
+    // Função genérica para excluir dados
+    async function deleteData(url, id, loadFunction) {
+        if (confirm('Do you really want to delete this item?')) {
+            try {
+                const response = await fetch(`${url}/${id}`, {
+                    method: 'DELETE'
+                });
 
-    window.editFloor = function(floor_id) {
-        // Implementar lógica de edição
-        const name = prompt("Enter new name:");
-        const rooms_number = prompt("Enter new number of rooms:");
-        const building_id = prompt("Enter new building ID:");
-        const color_id = prompt("Enter new color ID:");
+                if (!response.ok) throw new Error(`Failed to delete data from ${url}`);
+                loadFunction();
+            } catch (error) {
+                console.error(error);
+                alert(error.message);
+            }
+        }
+    }
 
-        fetch(`${API_URL}/floors/${floor_id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ name, rooms_number, building_id, color_id })
-        }).then(response => response.json()).then(data => {
-            alert(data.message);
-            fetchFloors(); // Atualiza a tabela
-        });
-    };
+    // Função para excluir edifício
+    async function deleteBuilding(id) {
+        await deleteData(`${API_URL}/buildings`, id, loadBuildings);
+    }
 
-    window.deleteFloor = function(floor_id) {
-        fetch(`${API_URL}/floors/${floor_id}`, {
-            method: 'DELETE'
-        }).then(response => response.json()).then(data => {
-            alert(data.message);
-            fetchFloors(); // Atualiza a tabela
-        });
-    };
+    // Função para excluir andar
+    async function deleteFloor(id) {
+        await deleteData(`${API_URL}/floors`, id, loadFloors);
+    }
 
-    // Eventos para os botões do menu
-    document.getElementById('showBuildings').addEventListener('click', () => showFormAndTable('buildings'));
-    document.getElementById('showRooms').addEventListener('click', () => showFormAndTable('rooms'));
-    document.getElementById('showFloors').addEventListener('click', () => showFormAndTable('floors'));
+    // Função para excluir sala
+    async function deleteRoom(id) {
+        await deleteData(`${API_URL}/rooms`, id, loadRooms);
+    }
+
+    // ==========================
+    // Funções para Abrir os Modais
+    // ==========================
+
+    // Função para mostrar o modal de edifício
+    function showBuildingModal() {
+        closeBuildingModal(); // Limpa o modal antes de abrir
+        $('#buildingModal').show();
+    }
+
+    // Função para mostrar o modal de andar
+    function showFloorModal() {
+        closeFloorModal(); // Limpa o modal antes de abrir
+        $('#floorModal').show();
+    }
+
+    // Função para mostrar o modal de sala
+    function showRoomModal() {
+        closeRoomModal(); // Limpa o modal antes de abrir
+        $('#roomModal').show();
+    }
+
+    // Função para fechar o modal de edifício
+    function closeBuildingModal() {
+        $('#buildingModal').hide();
+        $('#buildingForm')[0].reset(); // Limpa o formulário
+    }
+
+    // Função para fechar o modal de andar
+    function closeFloorModal() {
+        $('#floorModal').hide();
+        $('#floorForm')[0].reset(); // Limpa o formulário
+    }
+
+    // Função para fechar o modal de sala
+    function closeRoomModal() {
+        $('#roomModal').hide();
+        $('#roomForm')[0].reset(); // Limpa o formulário
+    }
+
+    // ==========================
+    // Funções para Alternar entre Seções
+    // ==========================
+
+    // Função para mostrar a seção de edifícios
+    function showBuildingsSection() {
+        $('#buildingsSection').show();
+        $('#floorsSection').hide();
+        $('#roomsSection').hide();
+        loadBuildings(); // Carrega os edifícios ao mostrar a seção
+    }
+
+    // Função para mostrar a seção de andares
+    function showFloorsSection() {
+        $('#buildingsSection').hide();
+        $('#floorsSection').show();
+        $('#roomsSection').hide();
+        loadFloors(); // Carrega os andares ao mostrar a seção
+    }
+
+    // Função para mostrar a seção de salas
+    function showRoomsSection() {
+        $('#buildingsSection').hide();
+        $('#floorsSection').hide();
+        $('#roomsSection').show();
+        loadRooms(); // Carrega as salas ao mostrar a seção
+    }
+
+    // ==========================
+    // Inicialização e Carregamento
+    // ==========================
+    $(document).ready(function() {
+        showBuildingsSection(); // Mostra a seção de edifícios por padrão ao iniciar
+    });
 }); 

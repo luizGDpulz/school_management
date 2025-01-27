@@ -8,7 +8,9 @@ function userRoutes($request_method, $request_uri) {
 
     switch ($request_method) {
         case 'GET':
-            if (isset($request_uri[2])) {
+            if (isset($request_uri[2]) && $request_uri[2] === 'roles') {
+                $response = $controller->getRoles();
+            } elseif (isset($request_uri[2])) {
                 $response = $controller->readUser($request_uri[2]);
             } else {
                 $response = $controller->readUsers();

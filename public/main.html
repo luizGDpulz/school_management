@@ -7,11 +7,12 @@
     <!-- ===== CSS ===== -->
     <link rel="stylesheet" href="./assets/css/styles.css">
     <link rel="stylesheet" href="./assets/css/users.css">
+    <link rel="stylesheet" href="./assets/css/infrastructure.css">
 
     <!-- ===== JS ===== -->
     <script src="./assets/js/main.js" defer></script>
     <script src="./assets/js/infrastructure.js" defer></script>
-    <script src="./assets/js/users.js"></script>
+    <script src="./assets/js/users.js" defer></script>
 
     <!-- ===== jQuery ===== -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -128,19 +129,143 @@
 
         <!-- Contêiner para Infrastructure -->
         <div id="infrastructure" class="content-section" style="display: none;">
-
-            <div class="infra-menu">
-                <button id="showBuildings">Buildings</button>
-                <button id="showRooms">Rooms</button>
-                <button id="showFloors">Floors</button>
+            <!-- Botões para selecionar seções -->
+            <div class="section-buttons">
+                <button onclick="showBuildingsSection()">Buildings</button>
+                <button onclick="showFloorsSection()">Floors</button>
+                <button onclick="showRoomsSection()">Rooms</button>
             </div>
 
-            <div id="formContainer">
-                <!-- Formulário dinâmico será inserido aqui -->
+            <!-- Seção de Edifícios -->
+            <div id="buildingsSection" class="section">
+                <h2>Buildings</h2>
+                <table id="buildingTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Address</th>
+                            <th>Number of Floors</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Os edifícios serão preenchidos aqui via JavaScript -->
+                    </tbody>
+                </table>
+                <button onclick="showBuildingModal()">Add Building</button>
+            </div>
+            
+
+            <!-- Seção de Andares -->
+            <div id="floorsSection" class="section" style="display: none;">
+                <h2>Floors</h2>
+                <table id="floorTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Building ID</th>
+                            <th>Floor Number</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Os andares serão preenchidos aqui via JavaScript -->
+                    </tbody>
+                </table>
+                <button onclick="showFloorModal()">Add Floor</button>
             </div>
 
-            <div id="dataTableContainer">
-                <!-- Tabela dinâmicas será inserida aqui -->
+            <!-- Seção de Salas -->
+            <div id="roomsSection" class="section" style="display: none;">
+                <h2>Rooms</h2>
+                <table id="roomTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Floor ID</th>
+                            <th>Room Name</th>
+                            <th>Capacity</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- As salas serão preenchidas aqui via JavaScript -->
+                    </tbody>
+                </table>
+                <button onclick="showRoomModal()">Add Room</button>
+            </div>
+        </div>
+
+        <!-- Modal Edifício -->
+        <div id="buildingModal" style="display: none;">
+            <div class="modal-content">
+                <h3>Building</h3>
+                <form id="buildingForm">
+                    <input type="hidden" id="buildingId">
+                    <div>
+                        <label>Name</label>
+                        <input type="text" id="buildingName" required>
+                    </div>
+                    <div>
+                        <label>Address</label>
+                        <input type="text" id="buildingAddress" required>
+                    </div>
+                    <div>
+                        <label>Number of Floors</label>
+                        <input type="number" id="buildingFloors" required>
+                    </div>
+                    <div>
+                        <label>Color ID</label>
+                        <input type="number" id="buildingColorId" required>
+                    </div>
+                    <button type="button" onclick="saveBuilding()">Save</button>
+                    <button type="button" onclick="closeBuildingModal()">Cancel</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal Andar -->
+        <div id="floorModal" style="display: none;">
+            <div class="modal-content">
+                <h3>Floor</h3>
+                <form id="floorForm">
+                    <input type="hidden" id="floorId">
+                    <div>
+                        <label>Building ID</label>
+                        <input type="number" id="floorBuildingId" required>
+                    </div>
+                    <div>
+                        <label>Floor Number</label>
+                        <input type="number" id="floorNumber" required>
+                    </div>
+                    <button type="button" onclick="saveFloor()">Save</button>
+                    <button type="button" onclick="closeFloorModal()">Cancel</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal Sala -->
+        <div id="roomModal" style="display: none;">
+            <div class="modal-content">
+                <h3>Room</h3>
+                <form id="roomForm">
+                    <input type="hidden" id="roomId">
+                    <div>
+                        <label>Floor ID</label>
+                        <input type="number" id="roomFloorId" required>
+                    </div>
+                    <div>
+                        <label>Room Name</label>
+                        <input type="text" id="roomName" required>
+                    </div>
+                    <div>
+                        <label>Capacity</label>
+                        <input type="number" id="roomCapacity" required>
+                    </div>
+                    <button type="button" onclick="saveRoom()">Save</button>
+                    <button type="button" onclick="closeRoomModal()">Cancel</button>
+                </form>
             </div>
         </div>
 
@@ -151,7 +276,6 @@
 
         <!-- Contêiner para Users -->
         <div id="users" class="content-section container" style="display: none;">
-            <h2>Usuários</h2>
             <button onclick="showUserModal()">Novo Usuário</button>
             <table id="userTable">
                 <thead>
@@ -167,13 +291,13 @@
             </table>
 
             <!-- Modal Usuário -->
-            <div id="userModal">
+            <div id="userModal" style="display: none;">
                 <div class="modal-content">
-                    <h3>Usuário</h3>
+                    <h3>New User</h3>
                     <form id="userForm">
                         <input type="hidden" id="userId">
                         <div>
-                            <label>Nome</label>
+                            <label>Name</label>
                             <input type="text" id="userName" required>
                         </div>
                         <div>
@@ -181,11 +305,16 @@
                             <input type="email" id="userEmail" required>
                         </div>
                         <div>
-                            <label>Função</label>
-                            <input type="text" id="userRole" required>
+                            <label>Role</label>
+                            <select id="userRole" required>
+                            </select>
                         </div>
-                        <button type="button" onclick="saveUser()">Salvar</button>
-                        <button type="button" onclick="closeUserModal()">Cancelar</button>
+                        <div>
+                            <label>Password</label> <!-- Novo campo para senha -->
+                            <input type="password" id="userPassword" required>
+                        </div>
+                        <button type="button" onclick="saveUser()">Save</button>
+                        <button type="button" onclick="closeUserModal()">Cancel</button>
                     </form>
                 </div>
             </div>
@@ -201,6 +330,5 @@
             <!-- Conteúdo das notificações -->
         </div>
     </section>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
 </html> 
